@@ -21,12 +21,15 @@ impl GGufModel<'_> {
         let head_weight = get("head.weight");
 
         RWKV {
-            embedding: Linear::new(
-                dt_linear,
-                [hidden_size, vocab_size],
-                emb_weight,
-                None,
-            ),
+            embedding: Embedding {
+                dt: emb_weight.dt(),
+                d: hidden_size,
+                wte: Table {
+                    row: vocab_size,
+                    weight: emb_weight,
+                },
+                wpe: None,
+            },
             blks: (0..n_layer)
                 .map(|iblk| {
                     RWKVBlock::new(
