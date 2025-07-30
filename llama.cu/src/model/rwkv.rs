@@ -110,14 +110,4 @@ impl GGufModel<'_> {
             }),
         }
     }
-
-    /// 构造 RWKV 模型的状态缓存张量
-    pub fn rwkv_state_cache<const N: usize>(&self) -> Tensor<usize, N> {
-        let dt = self.tensors["emb.weight"].dt();
-        let n_layer = meta![self => block_count];
-        let hidden_size = meta![self => hidden_size];
-        
-        // RWKV 状态包含: [n_layer, 2, hidden_size] (time_mix 和 channel_mix 各一个状态)
-        Tensor::from_dim_slice(dt, [n_layer, 2, hidden_size])
-    }
 }
